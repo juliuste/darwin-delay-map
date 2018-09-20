@@ -1,0 +1,26 @@
+{
+	"name": "darwin-delay-map",
+	"description": "Show network disruptions from “Darwin Push Port“ on a map over time.",
+	"version": "0.0.0",
+	"keywords": [],
+	"author": "Julius Tens <mail@juliustens.eu>",
+	"homepage": "https://github.com/juliuste/darwin-delay-map",
+	"repository": "juliuste/darwin-delay-map",
+	"bugs": "https://github.com/juliuste/darwin-delay-map/issues",
+	"main": "./index.js",
+	"dependencies": {
+		"@turf/helpers": "^5.1.5",
+		"browserify": "^16.2.2",
+		"lodash": "^4.17.11",
+		"mapbox-gl": "^0.49.0",
+		"moment-timezone": "^0.5.21"
+	},
+	"devDependencies": {},
+	"scripts": {
+		"build": "browserify index.js > assets/bundle.js"
+	},
+	"engines": {
+		"node": ">=8"
+	},
+	"license": "ISC"
+}
