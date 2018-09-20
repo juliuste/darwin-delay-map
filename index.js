@@ -38,6 +38,7 @@ rawData = rawData.map(d => {
 			const minute = Math.round(+moment.tz(d.date, 'Europe/London').format('mm')/10)
 
 			p.properties.delayed = disruptions[d.lateReason] || 0
+			p.properties.bDelayed = +(!!p.properties.delayed)
 			p.properties.time = 6*hour + minute
 			return p
 		}
@@ -75,7 +76,15 @@ resize()
 window.addEventListener('resize', resize)
 
 const refresh = counter => {
-	map.setFilter('disruptions', ['==', ['number', ['get', 'time']], counter])
+	const showPunctual = document.querySelector('#punctual').checked
+	if (!showPunctual) {
+		map.setFilter('disruptions', ['all',
+			['==', ['number', ['get', 'time']], counter],
+			['==', ['number', ['get', 'bDelayed']], 1]
+		])
+	} else {
+		map.setFilter('disruptions', ['==', ['number', ['get', 'time']], counter])
+	}
 	let hour = ''+Math.floor(counter/6)
 	if (hour.length === 1) hour = '0'+hour
 	let minute = ''+((counter % 6)*10)
@@ -109,13 +118,23 @@ map.on('load', () => {
 	}, 'admin-2-boundaries-dispute')
 
 	let counter = 6*5
-
 	let interval
 	const clear = () => clearInterval(interval)
 
-	refresh(counter)
-	interval = setInterval(() => {
-		refresh(counter++)
-		if (counter === 24*6) clear()
-	}, 500)
+	const start = () => {
+		refresh(counter)
+		interval = setInterval(() => {
+			refresh(counter++)
+			if (counter === 24*6) clear()
+		}, 500)
+	}
+
+	document.querySelector('#restart').addEventListener('click', () => {
+		counter = 6*5
+		try { clear() }
+		catch (e) {}
+		start()
+	})
+
+	start()
 })
